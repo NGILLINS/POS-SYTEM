@@ -1,0 +1,135 @@
+
+
+
+products = {
+    "Apple": {"price": 100, "stock": 20},
+    "Banana": {"price": 40, "stock": 50},
+    "Milk": {"price": 80, "stock": 30},
+    "Bread": {"price": 60, "stock": 25},
+    "Eggs": {"price": 120, "stock": 40},
+    "Rice": {"price": 200, "stock": 15},
+    "Sugar": {"price": 90, "stock": 10},
+    "Soap": {"price": 50, "stock": 12},
+    "Shampoo": {"price": 150, "stock": 18},
+    "Toothpaste": {"price": 75, "stock": 16},
+}
+
+cart = {}
+
+def show_products():
+    print("\n--- Products ---")
+    for name in products:
+        print(f"{name} - Price: {products[name]['price']} - Stock: {products[name]['stock']}")
+
+def add_to_cart():
+    name = input("Enter product name: ").title()
+    if name in products:
+        qty = int(input("Enter quantity: "))
+        if qty <= products[name]["stock"]:
+            if name in cart:
+                cart[name] += qty
+            else:
+                cart[name] = qty
+            products[name]["stock"] -= qty
+            print(f"{qty} {name} added to cart.")
+        else:
+            print("Not enough stock.")
+    else:
+        print("Product not found.")
+
+def remove_from_cart():
+    name = input("Enter product name to remove: ").title()
+    if name in cart:
+        qty = int(input("Enter quantity to remove: "))
+        if qty >= cart[name]:
+            products[name]["stock"] += cart[name]
+            del cart[name]
+            print(f"Removed all {name} from cart.")
+        else:
+            cart[name] -= qty
+            products[name]["stock"] += qty
+            print(f"Removed {qty} {name} from cart.")
+    else:
+        print("Product not in cart.")
+
+def view_cart():
+    print("\n--- Cart ---")
+    total = 0
+    for name in cart:
+        price = products[name]["price"]
+        qty = cart[name]
+        line_total = price * qty
+        total += line_total
+        print(f"{name} x{qty} = {line_total}")
+    print(f"Subtotal: {total}")
+
+def checkout():
+    print("\n--- Checkout ---")
+    subtotal = 0
+    for name in cart:
+        subtotal += products[name]["price"] * cart[name]
+
+    discount = 0
+    if subtotal > 5000:
+        discount = subtotal * 0.05
+        print(f"Discount: ${discount}")
+
+    tax = (subtotal - discount) * 0.10
+    total = subtotal - discount + tax
+
+    print(f"Subtotal: ${subtotal}")
+    print(f"Tax: ${tax}")
+    print(f"Total: ${total}")
+
+    payment = float(input("Enter payment amount: "))
+    if payment >= total:
+        change = payment - total
+        print(f"Change: ${change}")
+        print("\n--- Receipt ---")
+        print("Thank you for shopping!")
+        for name in cart:
+            print(f"{name} x{cart[name]} = ${products[name]['price'] * cart[name]}")
+        print(f"Total: ${total}")
+        print(f"Paid: ${payment}")
+        print(f"Change: ${change}")
+        print("Come again!\n")
+        cart.clear()
+    else:
+        print("Not enough payment.")
+
+def low_stock_check():
+    print("\nLow stock items:")
+    for name in products:
+        if products[name]["stock"] < 5:
+            print(f"{name} - Only {products[name]['stock']} left!")
+
+def main():
+    while True:
+        print("\n--- MENU ---")
+        print("1. Show Products")
+        print("2. Add to Cart")
+        print("3. Remove from Cart")
+        print("4. View Cart")
+        print("5. Checkout")
+        print("6. Exit")
+
+        choice = input("Choose an option: ")
+
+        if choice == "1":
+            show_products()
+        elif choice == "2":
+            add_to_cart()
+        elif choice == "3":
+            remove_from_cart()
+        elif choice == "4":
+            view_cart()
+        elif choice == "5":
+            checkout()
+            low_stock_check()
+        elif choice == "6":
+            print("Thank you. Goodbye!")
+            break
+        else:
+            print("Invalid choice.")
+
+main()
